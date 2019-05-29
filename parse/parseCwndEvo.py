@@ -33,12 +33,12 @@ if __name__ == '__main__':
     print("Algorithm Impl Scenario IterationX IterationY Time Cwnd")
     plots = binAlgs(sys.argv[1:])
     iters = max(int(pl[-1]) for pl in plots) + 1
+
     for pl in plots:
-        ccp = None
-        kernel = None
         for fn in plots[pl]:
             ts, cwnd = zip(*read(fn))
             ts = np.array(ts) - min(ts)
             for t, c in zip(ts, cwnd):
-                for iy in range(iters):
-                    print(*pl, iy, t, c)
+                print(*pl, 0, t, c)
+                # for iy in range(iters):
+                #    print(*pl, iy, t, c)

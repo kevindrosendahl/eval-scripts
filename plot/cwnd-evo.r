@@ -3,9 +3,9 @@
 library(ggplot2)
 
 plot <- function(data, out) {
-    ggplot(data, aes(x=Time, y=Cwnd, colour=Impl)) + 
-      geom_line() + 
-      facet_grid(IterationX ~ IterationY, scale="free")
+    ggplot(data, aes(x=Time, y=Cwnd, color=Impl, linetype=factor(IterationX))) + 
+      geom_line() # +
+      # facet_grid(IterationX ~ IterationY, scale="free")
     ggsave(out, width=12, height=6)
 }
 

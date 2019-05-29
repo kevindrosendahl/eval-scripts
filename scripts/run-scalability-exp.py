@@ -56,7 +56,8 @@ def run_exps(dest, exps, maxNumFlows, dur, iters):
                     elif 'ccp_per_10ms' in impl:
                         ccp_args = '-i 10'
                     threading.Thread(target=ccp_start, args=(dest, alg, ipc, outprefix, ccp_args), daemon=True).start()
-                    time.sleep(1)
+
+                time.sleep(1)
 
                 print(">", outprefix)
                 sh.run('iperf -c 127.0.0.1 -p 4242 -Z {} -P {} -t {} -w 16M > ./{}/{}-iperf.log'.format('ccp' if 'ccp' in impl else alg, numflows, dur, dest, outprefix), shell=True)
@@ -80,6 +81,7 @@ def plot(dest, exps, maxNumFlows, dur, iters):
                         outprefix = get_outprefix(impl, alg, numflows, dur, i)
                         print("> ./{}/{}-iperf.log".format(dest, outprefix))
                         bw = sh.check_output('./parse/parseIperf.py ./{}/{}-iperf.log'.format(dest, outprefix), shell=True)
+                        print(bw)
                         f.write("{0}-{1}-{2} {0} {1} {2} {3} {4} {5}\n".format(impl, ipc, alg, numflows, i, float(bw.strip())))
 
     if os.path.exists("./{}/tputs.pdf".format(dest)):

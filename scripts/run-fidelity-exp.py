@@ -12,6 +12,7 @@ parser.add_argument('--scenario', dest='scenarios', action='append', type=str, n
 parser.add_argument('--ipcs', dest='ipcs', action='append', type=str, nargs='+', default=[['all']])
 parser.add_argument('--kernel', dest='with_kernel', action='store_true', default=False)
 parser.add_argument('--plot-only', dest='plot_only', action='store_true', default=False)
+parser.add_argument('--num-flows', dest='num_flows', type=int, default='1')
 # link configuration
 parser.add_argument('--delay', dest='linkdelay', type=int, default='10')
 parser.add_argument('--rate', dest='fixedrate', type=int, default='96')
@@ -23,6 +24,7 @@ ipcs = ('netlink', 'chardev')
 
 import itertools
 import os
+import re
 import sys
 import time
 import threading
@@ -33,7 +35,15 @@ from start_ccp import start as ccp_start
 from start_ccp import algs
 import sh
 
-def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
+
+IPERF_PORT_REGEX = re.compile(r'.*\[.*?[0-9]+\].*?local [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ port ([0-9]+) .*')
+
+
+def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts, num_flows):
+    if iters != 1:
+        print('can only do single iterations')
+        sys.exit(1)
+
     print("Running Experiments")
     print("=========================")
     for alg, sockopt, name in exps:
@@ -65,7 +75,7 @@ def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
                               --uplink-queue-args="packets={6}" \
                               --downlink-queue-args="packets={6}" \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
-                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate, qsize_pkts), shell=True)
+                            -- ./scripts/run-iperf.sh {0} {1} {2} {3} {7}'.format(dest, outprefix, sockopt, dur, delay, rate, qsize_pkts, num_flows), shell=True)
                 elif trace == 'cell':
                     sh.run('mm-delay 10 \
                             mm-link ./mm-traces/Verizon-LTE-short.up ./mm-traces/Verizon-LTE-short.down \
@@ -74,20 +84,40 @@ def run_exps(exps, dest, iters, dur, scenarios, delay, rate, qsize_pkts):
                               --uplink-queue-args="packets=100" \
                               --downlink-queue-args="packets=100" \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
-                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur), shell=True)
+                            -- ./scripts/run-iperf.sh {0} {1} {2} {3} {4}'.format(dest, outprefix, sockopt, dur, num_flows), shell=True)
                 elif trace == 'drop':
                     sh.run('mm-delay {4} \
                             mm-link ./mm-traces/bw{5}.mahi ./mm-traces/bw{5}.mahi \
                               --uplink-log="./{0}/{1}-mahimahi.log" \
                             mm-loss uplink 0.0001 \
-                            -- ./scripts/run-iperf.sh {0} {1} {2} {3}'.format(dest, outprefix, sockopt, dur, delay, rate), shell=True)
+                            -- ./scripts/run-iperf.sh {0} {1} {2} {3} {6}'.format(dest, outprefix, sockopt, dur, delay, rate, num_flows), shell=True)
                 else:
                     print('unknown', trace)
                     sys.exit(1)
 
                 sh.run("sudo killall dd 2> /dev/null", shell=True)
-                sh.run('grep ":4242" "./{0}/{1}-tmp.log" > "./{0}/{1}-tcpprobe.log"'.format(dest, outprefix), shell=True)
+                sh.run('grep ":4242" "./{0}/{1}-tmp.log" > "./{0}/tcpprobe-tmp.log"'.format(dest, outprefix), shell=True)
                 sh.run('rm -f "./{}/{}-tmp.log"'.format(dest, outprefix), shell=True)
+
+				# Create tcpprobes for each flow masquarading as an iteration
+                for flow_num in range(1, num_flows + 1):
+                    flow_outprefix = "{}-{}-{}".format(name, trace, flow_num)
+                    with open("./{0}/{1}-iperf-{2}.log".format(dest, outprefix, flow_num), 'r') as f:
+                        # Iterate to the 4th line, then find the port
+                        line_num = 1
+                        for line in f:
+                            if line_num <= 4:
+                                line_num += 1
+                                continue
+                            
+                            m = IPERF_PORT_REGEX.match(line)
+                            assert m
+                            grp = m.groups()
+                            assert len(grp) == 1
+                            port = int(grp[0])
+                            sh.run('grep ":{2}" "./{0}/tcpprobe-tmp.log" > "./{0}/{1}-tcpprobe.log"'.format(dest, flow_outprefix, port), shell=True)
+                            break
+                
                 sh.run("mm-graph ./{0}/{1}-mahimahi.log 30 > ./{0}/{1}-mahimahi.eps 2> ./{0}/{1}-mmgraph.log".format(dest, outprefix), shell=True)
 
                 if sockopt == 'ccp':
@@ -178,7 +208,7 @@ if __name__ == '__main__':
 
         if not parsed.plot_only:
             setup(dest)
-            run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
+            run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize, parsed.num_flows)
 
     # ccp experiments
     for i in wanted_ipcs:
@@ -189,7 +219,7 @@ if __name__ == '__main__':
 
         if not parsed.plot_only:
             setup(dest, ipc=i)
-            run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize)
+            run_exps(exps, dest, iters, dur, scns, parsed.linkdelay, parsed.fixedrate, parsed.fixedqsize, parsed.num_flows)
 
     print()
     plot(dest, wanted_algs, scns)
