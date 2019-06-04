@@ -1,12 +1,8 @@
 killall iperf
 sudo pkill cubic
 
-pushd ../..
-echo "Making ccp"
-make
-
-echo "Enabling ccp"
-./scripts/setup.sh ipc=0
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+${DIR}/../setup.sh
 
 echo "Starting cubic ccp implementation, logging to ~/crash-cubic-ccp.log"
 sudo ./generic-cong-avoid/target/release/cubic --ipc=netlink --deficit_timeout=20 > ~/crash-cubic-ccp.log 2>&1 &
@@ -25,4 +21,3 @@ sudo pkill cubic
 echo "Showing end of syslog"
 tail /var/log/syslog -n 75
 
-popd
