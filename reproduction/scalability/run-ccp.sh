@@ -1,4 +1,4 @@
-set -eu
+set -u
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -11,11 +11,12 @@ CCP_ALG=${5}
 ${DIR}/../setup.sh
 echo 'ccp' | sudo tee -a /proc/sys/net/ipv4/tcp_congestion_control > /dev/null
 
-pkill cubic
-pkill reno 
+sudo pkill cubic
+sudo pkill reno
 killall iperf
 
-${DIR}/../../generic-cong-avoid/target/release/${CCP_ALG}
+cd ${DIR}/../..
+sudo ./generic-cong-avoid/target/release/${CCP_ALG} --ipc=netlink &
 
 
 # Run iperf longer than we collect cpu metrics so we only collect metrics during the run

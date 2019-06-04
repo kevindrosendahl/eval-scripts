@@ -1,4 +1,4 @@
-set -eu
+set -u
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -22,4 +22,5 @@ sleep 2
 python3 ${DIR}/cpu_stats.py --outfile ${DEST_DIR}/kernel-${5}.cpu_data \
                             --freq 100 \
                             --dur ${DURATION}
+
 

@@ -8,6 +8,6 @@ NUM_FLOWS=${5:-1}
 
 for i in `eval echo {1..${NUM_FLOWS}}`
 do
-        iperf -c ${SERVER} -p 4242 -Z ${ALG} -t ${DURATION} >> "./${OUT_DIR}/${ALG}-iperf.log" &
+        iperf -c ${SERVER} -p 4242 -Z ${ALG} -t ${DURATION} >> "${DEST_DIR}/${ALG}-iperf.log" &
 done
 
