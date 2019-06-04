@@ -18,6 +18,9 @@ killall iperf
 cd ${DIR}/../..
 sudo ./generic-cong-avoid/target/release/${CCP_ALG} --ipc=netlink &
 
+# Allow cpu reporting to catch up from work above
+sleep 5
+
 
 # Run iperf longer than we collect cpu metrics so we only collect metrics during the run
 ${DIR}/run-iperf.sh ${DEST_DIR} ${SERVER} 'ccp' $((${DURATION} + 5)) ${NUM_FLOWS}
