@@ -19,7 +19,7 @@ ${DIR}/run-iperf.sh ${DEST_DIR} ${SERVER} ${5} $((${DURATION} + 5)) ${NUM_FLOWS}
 # Wait for the iperfs to begin
 sleep 2
 
-python3 ${DIR}/cpu_stats.py --outfile ${DEST_DIR}/kernel-${5}.cpu_data \
+python3 ${DIR}/cpu_stats.py --outfile ${DEST_DIR}/kernel-${5}-${NUM_FLOWS}.cpu_data \
                             --freq 100 \
                             --dur ${DURATION}
 

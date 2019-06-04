@@ -25,7 +25,7 @@ ${DIR}/run-iperf.sh ${DEST_DIR} ${SERVER} 'ccp' $((${DURATION} + 5)) ${NUM_FLOWS
 # Wait for the iperfs to begin
 sleep 2
 
-python3 ${DIR}/cpu_stats.py --outfile ${DEST_DIR}/ccp-${CCP_ALG}.cpu_data \
+python3 ${DIR}/cpu_stats.py --outfile ${DEST_DIR}/ccp-${CCP_ALG}-${NUM_FLOWS}.cpu_data \
                             --freq 100 \
                             --dur ${DURATION}
 
