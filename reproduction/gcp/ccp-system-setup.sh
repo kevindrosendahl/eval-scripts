@@ -11,7 +11,7 @@ sudo apt-get -y install llvm-3.9-dev libclang-3.9-dev clang-3.9
 curl https://sh.rustup.rs -sSf > rust.install.sh
 chmod u+x ./rust.install.sh
 chown ubuntu:ubuntu ./rust.install.sh
-su -c "./rust.install.sh -y -v --default-toolchain nightly" ubuntu
+sudo su -c "./rust.install.sh -y -v --default-toolchain nightly" ubuntu
 # Python setuptools
 sudo apt-get -y install python-pip python3-pip
 sudo pip3 install setuptools

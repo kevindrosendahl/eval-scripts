@@ -2,52 +2,41 @@ variable "project_name" {
     type = "string"
 }
 
+variable "ssh_key" {
+    type = "string"
+}
+
+variable "machine_type" {
+    type = "string"
+    default = "n1-highcpu-8"
+}
+
+output "ip-1" {
+    value = "${module.1.ip}"
+}
+
+output "ip-2" {
+    value = "${module.2.ip}"
+}
+
 provider "google" {
  project = "${var.project_name}"
  region  = "us-west1"
  zone    = "us-west1b"
 }
 
-resource "google_compute_instance" "a" {
-    name         = "a"
-    machine_type = "n1-highcpu-8"
-    zone         = "us-west1-b"
+module "1" {
+    source = "./gcp-node"
 
-    boot_disk {
-        initialize_params {
-            image = "ubuntu-os-cloud/ubuntu-1804-lts"
-        }
-    }
-    
-    network_interface {
-        network = "default"
-
-        access_config {}
-    }
-
-    metadata = {
-        sshKeys = "ubuntu:${file("~/.ssh/id_rsa-github.pub")}"
-    }
+    name = "node-1"
+    ssh_key = "${var.ssh_key}"
+    machine_type = "${var.machine_type}"
 }
 
-resource "google_compute_instance" "b" {
-    name         = "b"
-    machine_type = "n1-highcpu-8"
-    zone         = "us-west1-b"
+module "2" {
+    source = "./gcp-node"
 
-    boot_disk {
-        initialize_params {
-            image = "ubuntu-os-cloud/ubuntu-1804-lts"
-        }
-    }
-    
-    network_interface {
-        network = "default"
-
-        access_config {}
-    }
-
-    metadata = {
-        sshKeys = "ubuntu:${file("~/.ssh/id_rsa-github.pub")}"
-    }
+    name = "node-2"
+    ssh_key = "${var.ssh_key}"
+    machine_type = "${var.machine_type}"
 }
