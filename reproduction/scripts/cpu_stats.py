@@ -15,7 +15,7 @@ parser.add_argument('--dur', dest='dur', type=int, default=10, help='Duration to
 def get_base_stats():
     with open('/proc/stat') as f:
         line = f.readline()
-        return np.array(map(float, line.split()[1:]))
+        return np.array(list(map(float, line.split()[1:])))
 
 
 #
@@ -23,7 +23,7 @@ def write_new_stats(outfile, prev, freq):
     with open('/proc/stat') as f:
         line = f.readline()
 
-        data = np.array(map(float, line.split()[1:]))
+        data = np.array(list(map(float, line.split()[1:])))
   
         # Convert to percent (also convert freq to jiffies)
         norm_data = (data - prev) / sum(data - prev) * 100.0
