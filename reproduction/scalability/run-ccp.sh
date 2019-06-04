@@ -9,7 +9,6 @@ NUM_FLOWS=${4:-1}
 CCP_ALG=${5}
 
 ${DIR}/../setup.sh
-echo 'ccp' | sudo tee -a /proc/sys/net/ipv4/tcp_congestion_control > /dev/null
 
 sudo pkill cubic
 sudo pkill reno

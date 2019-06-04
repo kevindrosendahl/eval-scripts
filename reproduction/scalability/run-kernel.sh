@@ -8,8 +8,6 @@ DURATION=${3}
 NUM_FLOWS=${4:-1}
 KERNEL_ALG=${5}
 
-echo ${5} | sudo tee -a /proc/sys/net/ipv4/tcp_congestion_control > /dev/null
-
 pkill cubic
 killall iperf
 
