@@ -11,12 +11,20 @@ variable "machine_type" {
     default = "custom-8-65536-ext"
 }
 
-output "ip-1" {
-    value = "${module.1.ip}"
+output "public_ip_1" {
+    value = "${module.1.public_ip}"
 }
 
-output "ip-2" {
-    value = "${module.2.ip}"
+output "internal_ip_1" {
+    value = "${module.1.internal_ip}"
+}
+
+output "public_ip_2" {
+    value = "${module.2.public_ip}"
+}
+
+output "internal-ip-2" {
+    value = "${module.2.internal_ip}"
 }
 
 provider "google" {

@@ -10,8 +10,12 @@ variable "machine_type" {
     type = "string"
 }
 
-output "ip" {
+output "public_ip" {
   value = "${google_compute_instance.instance.network_interface.0.access_config.0.nat_ip}"
+}
+
+output "internal_ip" {
+  value = "${google_compute_instance.instance.network_interface.0.network_ip}"
 }
 
 resource "google_compute_instance" "instance" {
