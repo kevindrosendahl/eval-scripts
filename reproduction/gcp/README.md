@@ -2,7 +2,7 @@
 
 ## Provisioning
 
-You can either provision the pair of instances through the GCP console, or through [terraform](#Terraform Provisioning).
+You can either provision the pair of instances through the GCP console, or through [terraform](#terraform-provisioning).
 
 If you provision manually, once your instance is up, clone this repo (`git clone https://github.com/kevindrosendahl/eval-scripts.git`).
 
