@@ -8,7 +8,7 @@ variable "ssh_key" {
 
 variable "machine_type" {
     type = "string"
-    default = "n1-highcpu-8"
+    default = "custom-8-65536-ext"
 }
 
 output "ip-1" {
