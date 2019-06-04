@@ -3,3 +3,6 @@
 *.eps
 *__pycache__*
 .vagrant/
+**/.terraform
+*.tfstate*
+.DS_store
