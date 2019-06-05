@@ -17,7 +17,7 @@ def read_file(file_name):
         for line in data_file:
             data.append(list(map(float, line.split())))
 
-    data = np.array(data)
+    return np.array(data)
     average = np.average(data, axis=0)
     return average
  
@@ -25,21 +25,34 @@ def read_file(file_name):
 def combine_files(directory, dest):
     with open(dest + '-reno.csv', 'w+') as reno_dest_file:
         with open(dest + '-cubic.csv', 'w+') as cubic_dest_file:
-            reno_dest_file.write('Impl NumFlows Type Value\n')
-            cubic_dest_file.write('Impl NumFlows Type Value\n')
-            for file_name in os.listdir(directory):
-                match = FILE_NAME_REGEX.match(file_name)
-                if not match:
-                    continue
-                
-                average = read_file(directory + '/' + file_name)
-                (data_path, algorithm, num_flows) = match.groups()
-                num_flows = int(num_flows)
-                dest_file = reno_dest_file if algorithm == 'reno' else cubic_dest_file
-                (user, _, system, _, _, _, interrupt, _, _, _) = average
-                dest_file.write('{} {} user {}\n'.format(data_path, num_flows, user))
-                dest_file.write('{} {} system {}\n'.format(data_path, num_flows, system))
-                dest_file.write('{} {} interrupt {}\n'.format(data_path, num_flows, interrupt))
+            with open(dest + '-averaged.csv', 'w+') as averaged_dest_file:
+                reno_dest_file.write('Impl NumFlows Type Value\n')
+                cubic_dest_file.write('Impl NumFlows Type Value\n')
+                averaged_dest_file.write('Impl Alg NumFlows Average StdDev\n')
+
+                for file_name in os.listdir(directory):
+                    match = FILE_NAME_REGEX.match(file_name)
+                    if not match:
+                        continue
+                    
+                    data = read_file(directory + '/' + file_name)
+
+                    avgs = np.average(data, axis=0)
+                    (user_avg, _, system_avg, _, _, _, interrupt_avg, _, _, _) = avgs
+                    combined_avg = user_avg + system_avg + interrupt_avg
+
+                    stds = np.std(data, axis=0)
+                    (user_std, _, system_std, _, _, _, interrupt_std, _, _, _) = stds
+                    combined_std = user_std + system_std + interrupt_std
+
+                    (data_path, alg, num_flows) = match.groups()
+                    num_flows = int(num_flows)
+                    dest_file = reno_dest_file if alg == 'reno' else cubic_dest_file
+
+                    dest_file.write('{} {} user {}\n'.format(data_path, num_flows, user_avg))
+                    dest_file.write('{} {} system {}\n'.format(data_path, num_flows, system_avg))
+                    dest_file.write('{} {} interrupt {}\n'.format(data_path, num_flows, interrupt_avg))
+                    averaged_dest_file.write('{} {} {} {} {}\n'.format(data_path, alg, num_flows, combined_avg, combined_std))
 
 
 if __name__ == '__main__':

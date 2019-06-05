@@ -1,5 +1,5 @@
 *.log
-*.pdf
+Rplots.pdf
 *.eps
 *__pycache__*
 .vagrant/

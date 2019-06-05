@@ -36,6 +36,8 @@ This will output two files, `combined-cubic.csv` and `combined-reno.csv`.
 Finally, you can use these files to produce the charts:
 
 ```bash
-$ ./plot/grouped.r ~/scalability-data/combined-cubic.csv ~scalability-plots/output-cubic.pdf
+$ ./plot/stacked.r ~/scalability-data/combined-cubic.csv ~/scalability-plots/stacked-cubic.pdf
+$ ./plot/stacked.r ~/scalability-data/combined-reno.csv ~/scalability-plots/stacked-reno.pdf
+$ ./plot/averaged.r ~/scalability-data/combined-averaged.csv ~/scalability-plots/averaged.pdf
 ```
 
