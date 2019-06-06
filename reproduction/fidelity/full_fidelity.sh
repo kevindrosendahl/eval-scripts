@@ -4,12 +4,12 @@ echo Starting full fidelity tests
 cd ../../eval-scripts
 
 # Run algs separately to produce individual plots
-python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/cubic_fixed --ipcs netlink --duration 30 --iters 10 --alg cubic --scenario fixed
-python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/cubic_drop --ipcs netlink --duration 30 --iters 10 --alg cubic --scenario drop
-python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/cubic_cell --ipcs netlink --duration 30 --iters 10 --alg cubic --scenario cell
-python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/reno_fixed --ipcs netlink --duration 30 --iters 10 --alg reno --scenario fixed
-python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/reno_drop --ipcs netlink --duration 30 --iters 10 --alg reno --scenario drop
-python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/reno_cell --ipcs netlink --duration 30 --iters 10 --alg reno --scenario cell
+python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/cubic_fixed --ipcs netlink --duration 30 --iters 10 --alg cubic --scenario fixed --delay 20
+python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/cubic_drop --ipcs netlink --duration 30 --iters 10 --alg cubic --scenario drop --delay 20
+python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/cubic_cell --ipcs netlink --duration 30 --iters 10 --alg cubic --scenario cell --delay 20
+python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/reno_fixed --ipcs netlink --duration 30 --iters 10 --alg reno --scenario fixed --delay 20
+python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/reno_drop --ipcs netlink --duration 30 --iters 10 --alg reno --scenario drop --delay 20
+python3 ./scripts/run-fidelity-exp.py --outdir ./reproduction/fidelity/data/reno_cell --ipcs netlink --duration 30 --iters 10 --alg reno --scenario cell --delay 20
 
 cd reproduction/fidelity/data
 
